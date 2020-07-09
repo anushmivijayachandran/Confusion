@@ -3,8 +3,6 @@ import {Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem
 Modal, ModalHeader,ModalBody, Label, Row, Col } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form' ;
-//import Moment from 'react-moment';
-//import 'moment-timezone';
 
 function RenderDish({dish}) {
       if(dish != null){
@@ -50,9 +48,8 @@ function RenderDish({dish}) {
       }
 
       handleCommentSubmit(values) {
-        console.log("Current state is:" + JSON.stringify(values));
-        alert("Current state is:" + JSON.stringify(values));
         this.toggleModal();
+        this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
       }
 
 
@@ -69,7 +66,7 @@ function RenderDish({dish}) {
                 <Row>
                 <Col md={{size:12}}>
                   <Label>Rating</Label>
-                  <Control.select model=".rating" name="rating"
+                <Control.select model=".rating" id="rating" name="rating"
                     className="form-control">
                     <option>1</option>
                     <option>2</option>
@@ -101,9 +98,9 @@ function RenderDish({dish}) {
                 </Col>
               </Row>
               <Row className="form-group">
-                <Label htmlFor="message" md={12}>Comment</Label>
+                <Label htmlFor="comment" md={12}>Comment</Label>
                 <Col md={12}>
-                  <Control.textarea model=".message" id="message" name="message"
+                  <Control.textarea model=".comment" id="comment" name="comment"
                     rows="7"
                     className="form-control"/>
                 </Col>
@@ -117,9 +114,9 @@ function RenderDish({dish}) {
       }
     }
 
-    function RenderComments(comments){
+    function RenderComments({comments, addComment, dishId}){
       if(comments != null){
-        const comment = comments.comments.map((comment) => {
+        const comment = comments.map((comment) => {
               return(
                 <div key={comment.id}>
                     <CardText>{comment.comment}</CardText>
@@ -133,7 +130,7 @@ function RenderDish({dish}) {
         <div>
           <h4>Comments</h4>
         {comment}
-        <CommentForm/>
+        <CommentForm dishId={dishId} addComment={addComment}/>
         </div>);
 
     }
@@ -166,7 +163,9 @@ function RenderDish({dish}) {
                   <RenderDish dish={props.dish} />
               </div>
               <div className="col-12 col-md-5 m-1">
-                  <RenderComments comments={props.comments} />
+                  <RenderComments comments={props.comments}
+                  addComment={props.addComment}
+                  dishId={props.dish.id}/>
               </div>
           </div>
           </div>
