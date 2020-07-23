@@ -1,22 +1,41 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
+import { Loading } from './LoadingComponent';
 import { Link } from 'react-router-dom';
+import { baseUrl } from '../shared/baseUrl';
+import { Stagger, Fade } from 'react-animation-components';
 
-function RenderCard({leaders}) {
+function RenderCard({leaders, isLoading, errMess}) {
   console.log("leaders",leaders);
-  return(
-    leaders.map((leader) => (
-      <Media style ={{paddingTop:'40px', paddingRight:'150px'}}>
-          <Media object src={leader.image} alt={leader.name} style ={{paddingRight:'50px'}}/>
-          <Media body>
-            <Media heading>{leader.name} </Media>
-            <Media style ={{paddingBottom:'10px'}}>{leader.designation}</Media>
-            <Media>{leader.description}</Media>
+  if(isLoading) {
+    return (
+      <Loading />
+    );
+  }
+  else if (errMess) {
+    return (
+      <h4>{errMess}</h4>
+    );
+  }
+  else{
+    return(
+      leaders.map((leader) => (
+        <Stagger in>
+          <Fade in>
+            <Media style ={{paddingTop:'40px', paddingRight:'150px'}}>
+              <Media object src={baseUrl + leader.image} alt={leader.name} style ={{paddingRight:'50px'}}/>
+              <Media body>
+                <Media heading>{leader.name} </Media>
+                <Media style ={{paddingBottom:'10px'}}>{leader.designation}</Media>
+                <Media>{leader.description}</Media>
+              </Media>
           </Media>
-      </Media>
-    ))
+        </Fade>
+      </Stagger>
+      ))
 
-  );
+    );
+}
 }
 
 function About(props) {
@@ -77,7 +96,9 @@ function About(props) {
                 </div>
                 <div className="col-12">
                     <Media list>
-                        <RenderCard leaders={props.leaders}/>
+                        <RenderCard leaders={props.leaders}
+                          isLoading={props.leadersLoading}
+                          errMess={props.leadersErrMess}/>
                     </Media>
                 </div>
             </div>
